@@ -1,7 +1,7 @@
 function getStudentsByLocation(students, city) {
   return students.filter(
-    (student) => student.location === city
-  ); // Split line to conform to max-len rule
+    (student) => student.location === city, // Added trailing comma
+  );
 }
 
 export default getStudentsByLocation;
