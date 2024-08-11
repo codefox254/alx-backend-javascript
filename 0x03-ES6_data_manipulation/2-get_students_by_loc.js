@@ -1,5 +1,7 @@
 function getStudentsByLocation(students, city) {
-  return students.filter((student) => student.location === city); // Added parentheses around arrow function argument
+  return students.filter(
+    (student) => student.location === city
+  ); // Split line to conform to max-len rule
 }
 
 export default getStudentsByLocation;
