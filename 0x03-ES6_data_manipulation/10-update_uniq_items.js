@@ -1,14 +1,15 @@
-// update_uniq_items.js
-export function updateUniqueItems(items) {
-    if (!(items instanceof Map)) {
-        throw new Error("Cannot process");
-    }
+function updateUniqueItems(items) {
+  if (!(items instanceof Map)) {
+    throw new Error('Cannot process');
+  }
 
-    for (const [key, value] of items.entries()) {
-        if (value === 1) {
-            items.set(key, 100);
-        }
+  for (const [key, value] of items.entries()) {
+    if (value === 1) {
+      items.set(key, 100);
     }
+  }
 
-    return items;
+  return items;
 }
+
+export default updateUniqueItems;
