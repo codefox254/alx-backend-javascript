@@ -1,9 +1,14 @@
-def updateUniqueItems(items):
-    if not isinstance(items, dict):
-        raise ValueError("Cannot process")
-    
-    for key, value in items.items():
-        if value == 1:
-            items[key] = 100
-    
-    return items
+// update_uniq_items.js
+export function updateUniqueItems(items) {
+    if (!(items instanceof Map)) {
+        throw new Error("Cannot process");
+    }
+
+    for (const [key, value] of items.entries()) {
+        if (value === 1) {
+            items.set(key, 100);
+        }
+    }
+
+    return items;
+}
