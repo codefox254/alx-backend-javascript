@@ -1,7 +1,9 @@
-function calculateNumber(a, b) {
-  const roundedA = Math.round(a);  // Round the first number
-  const roundedB = Math.round(b);  // Round the second number
-  return roundedA + roundedB;      // Return the sum of rounded numbers
-}
+module.exports = function calculateNumber(a, b = 0) {
+  const aNum = Number(a);
+  const bNum = Number(b);
 
-module.exports = calculateNumber;
+  if (Number.isNaN(aNum) || Number.isNaN(bNum))
+    throw TypeError('Parameters must be numbers');
+
+  return Math.round(aNum) + Math.round(bNum);
+};
