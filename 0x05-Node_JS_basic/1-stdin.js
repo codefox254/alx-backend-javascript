@@ -1,18 +1,10 @@
-// 1-stdin.js
-
-// Display initial message
-console.log('Welcome to Holberton School, what is your name?');
-
-// Listen for user input from stdin
-process.stdin.on('data', (data) => {
-  const name = data.toString().trim(); // Remove any extra newline characters
-  console.log(`Your name is: ${name}`);
-  
-  // End the process after showing the name
-  process.exit();
+// This Program will uses stdin and executes via command line
+process.stdout.write('Welcome to Holberton School, what is your name?\n');
+process.stdin.setEncoding('utf8');
+process.stdin.on('readable', () => {
+  const name = process.stdin.read();
+  if (name) process.stdout.write(`Your name is: ${name}`);
 });
-
-// Display closing message when the program ends
-process.on('exit', () => {
-  console.log('This important software is now closing');
+process.stdin.on('end', () => {
+  process.stdout.write('This important software is now closing\n');
 });
