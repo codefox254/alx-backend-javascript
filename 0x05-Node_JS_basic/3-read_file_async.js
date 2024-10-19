@@ -1,52 +1,42 @@
-// 3-read_file_async.js
-const fs = require('fs').promises;
+const { readFile } = require('fs');
 
-function countStudents(path) {
-  return fs.readFile(path, 'utf8')
-    .then((data) => {
-      // Split the file content by new lines and filter out empty lines
-      const lines = data.split('\n').filter((line) => line.trim() !== '');
-
-      // Check if the file has at least a header and some students
-      if (lines.length < 2) {
-        throw new Error('The database has no valid student entries.');
-      }
-
-      // Remove the header line and process the remaining lines
-      const studentRecords = lines.slice(1);
-
-      // Initialize an object to count students per field
-      const fieldStudents = {};
-
-      // Process each student record
-      studentRecords.forEach((line) => {
-        const studentData = line.split(',');
-        const firstName = studentData[0].trim();
-        const field = studentData[3].trim();
-
-        if (firstName && field) {
-          if (!fieldStudents[field]) {
-            fieldStudents[field] = [];
+function countStudents(fileName) {
+  const students = {};
+  const fields = {};
+  let length = 0;
+  return new Promise((resolve, reject) => {
+    readFile(fileName, (error, data) => {
+      if (error) {
+        reject(Error('Cannot load the database'));
+      } else {
+        const lines = data.toString().split('\n');
+        for (let i = 0; i < lines.length; i += 1) {
+          if (lines[i]) {
+            length += 1;
+            const field = lines[i].toString().split(',');
+            if (Object.prototype.hasOwnProperty.call(students, field[3])) {
+              students[field[3]].push(field[0]);
+            } else {
+              students[field[3]] = [field[0]];
+            }
+            if (Object.prototype.hasOwnProperty.call(fields, field[3])) {
+              fields[field[3]] += 1;
+            } else {
+              fields[field[3]] = 1;
+            }
           }
-          fieldStudents[field].push(firstName);
         }
-      });
-
-      // Log the total number of students
-      console.log(`Number of students: ${studentRecords.length}`);
-
-      // Log the number of students per field and their names
-      for (const field in fieldStudents) {
-        if (fieldStudents.hasOwnProperty(field)) {
-          const studentsInField = fieldStudents[field];
-          console.log(`Number of students in ${field}: ${studentsInField.length}. List: ${studentsInField.join(', ')}`);
+        const l = length - 1;
+        console.log(`Number of students: ${l}`);
+        for (const [key, value] of Object.entries(fields)) {
+          if (key !== 'field') {
+            console.log(`Number of students in ${key}: ${value}. List: ${students[key].join(', ')}`);
+          }
         }
+        resolve(data);
       }
-    })
-    .catch(() => {
-      // If an error occurs (like file not found), throw an appropriate error
-      throw new Error('Cannot load the database');
     });
+  });
 }
 
 module.exports = countStudents;

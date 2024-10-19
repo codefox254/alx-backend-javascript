@@ -1,48 +1,70 @@
-// 5-http.js
 const http = require('http');
-const url = require('url');
-const countStudents = require('./3-read_file_async');
+const { readFile } = require('fs');
 
-// Database file path (passed as an argument)
-const databaseFile = process.argv[2];
+const hostname = '127.0.0.1';
+const port = 1245;
 
-// Create the HTTP server
-const app = http.createServer((req, res) => {
-  // Parse the URL to determine the path
-  const reqUrl = url.parse(req.url, true).pathname;
+function countStudents(fileName) {
+  const students = {};
+  const fields = {};
+  let length = 0;
+  return new Promise((resolve, reject) => {
+    readFile(fileName, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        let output = '';
+        const lines = data.toString().split('\n');
+        for (let i = 0; i < lines.length; i += 1) {
+          if (lines[i]) {
+            length += 1;
+            const field = lines[i].toString().split(',');
+            if (Object.prototype.hasOwnProperty.call(students, field[3])) {
+              students[field[3]].push(field[0]);
+            } else {
+              students[field[3]] = [field[0]];
+            }
+            if (Object.prototype.hasOwnProperty.call(fields, field[3])) {
+              fields[field[3]] += 1;
+            } else {
+              fields[field[3]] = 1;
+            }
+          }
+        }
+        const l = length - 1;
+        output += `Number of students: ${l}\n`;
+        for (const [key, value] of Object.entries(fields)) {
+          if (key !== 'field') {
+            output += `Number of students in ${key}: ${value}. `;
+            output += `List: ${students[key].join(', ')}\n`;
+          }
+        }
+        resolve(output);
+      }
+    });
+  });
+}
 
-  // Set the content type to plain text for all responses
-  res.setHeader('Content-Type', 'text/plain');
-
-  // Handle the root path ('/')
-  if (reqUrl === '/') {
-    res.statusCode = 200;
-    res.end('Hello Holberton School!');
+const app = http.createServer((request, response) => {
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'text/plain');
+  if (request.url === '/') {
+    response.write('Hello Holberton School!');
+    response.end();
   }
-  // Handle the '/students' path
-  else if (reqUrl === '/students') {
-    res.statusCode = 200;
-    res.write('This is the list of our students\n');
-
-    // Call countStudents function to get and display student data
-    countStudents(databaseFile)
-      .then(() => {
-        res.end(); // End the response after processing students
-      })
-      .catch((error) => {
-        res.end(error.message); // Display error message if database cannot be loaded
-      });
-  } else {
-    // If the path is neither '/' nor '/students', return a 404 Not Found
-    res.statusCode = 404;
-    res.end('Not Found');
+  if (request.url === '/students') {
+    response.write('This is the list of our students\n');
+    countStudents(process.argv[2].toString()).then((output) => {
+      const outString = output.slice(0, -1);
+      response.end(outString);
+    }).catch(() => {
+      response.statusCode = 404;
+      response.end('Cannot load the database');
+    });
   }
 });
 
-// Listen on port 1245
-app.listen(1245, () => {
-  console.log('Server is listening on port 1245');
+app.listen(port, hostname, () => {
 });
 
-// Export the app
 module.exports = app;
