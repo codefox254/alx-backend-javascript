@@ -1,24 +1,23 @@
 function calculateNumber(type, a, b) {
-  // Round a and b to the nearest integer
-  const roundedA = Math.round(a);
-  const roundedB = Math.round(b);
-
-  // Perform operation based on the type
-  if (type === 'SUM') {
-    return roundedA + roundedB;
-  } else if (type === 'SUBTRACT') {
-    return roundedA - roundedB;
-  } else if (type === 'DIVIDE') {
-    // Handle division by 0 case
-    if (roundedB === 0) {
-      return 'Error';
+    const an = Math.round(a);
+    const bn = Math.round(b);
+    let c = 0;
+    switch (type) {
+    case 'SUM':
+	c = an + bn;
+	break;
+    case 'SUBTRACT':
+	c = an - bn;
+	break;
+    case 'DIVIDE':
+      if (bn === 0) {
+            c = "Error";
+      } else {
+            c = an / bn;
+      }
+      break;
     }
-    return roundedA / roundedB;
-  } else {
-    // Handle invalid operation types
-    throw new Error('Invalid operation type');
-  }
+    return c;
 }
 
-// Export the function as default export
-export default calculateNumber;
+module.exports = calculateNumber;

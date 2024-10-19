@@ -1,37 +1,23 @@
-// 5-payment.test.js
-import { sendPaymentRequestToApi } from './5-payment.js';
-import Utils from './utils.js';
-import sinon from 'sinon';
+const {describe, it} = require("mocha");
+const sinon = require("sinon");
+const sendPaymentRequestToApi = require("./5-payment");
+const expect = require("chai").expect;
 
-describe('sendPaymentRequestToApi', () => {
-  let stub;
-  let consoleLogSpy;
+describe("sendPaymentRequestToApi", function() {
+    beforeEach("Set up spy to use for each test", function() {
+	sinon.spy(console, "log");
+    });
+    afterEach("restore spy after each test", function() {
+	console.log.restore();
+    });
+    it("check that console.log is called with the right arg", function() {
+	sendPaymentRequestToApi(100, 20);
 
-  beforeEach(() => {
-    // Create a stub for Utils.calculateNumber
-    stub = sinon.stub(Utils, 'calculateNumber');
-    consoleLogSpy = sinon.spy(console, 'log');
-  });
+	expect(console.log.withArgs("The total is: 120").calledOnce).to.be.true;
+    });
+    it("check that console.log is called with the right arg", function() {
+	sendPaymentRequestToApi(10, 10);
 
-  afterEach(() => {
-    // Restore the original method and spy
-    stub.restore();
-    consoleLogSpy.restore();
-  });
-
-  it('should log the correct total for 100 and 20', () => {
-    stub.returns(120);
-    sendPaymentRequestToApi(100, 20);
-    
-    sinon.assert.calledOnce(consoleLogSpy);
-    sinon.assert.calledWith(consoleLogSpy, 'The total is: 120');
-  });
-
-  it('should log the correct total for 10 and 10', () => {
-    stub.returns(20);
-    sendPaymentRequestToApi(10, 10);
-    
-    sinon.assert.calledOnce(consoleLogSpy);
-    sinon.assert.calledWith(consoleLogSpy, 'The total is: 20');
-  });
+	expect(console.log.withArgs("The total is: 20").calledOnce).to.be.true;
+    });
 });

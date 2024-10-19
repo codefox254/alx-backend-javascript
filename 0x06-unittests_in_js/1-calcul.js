@@ -1,21 +1,23 @@
-// 1-calcul.js
 function calculateNumber(type, a, b) {
-  const roundedA = Math.round(a);
-  const roundedB = Math.round(b);
-
-  switch (type) {
+    const an = Math.round(a);
+    const bn = Math.round(b);
+    let c = 0;
+    switch (type) {
     case 'SUM':
-      return roundedA + roundedB;
+	c = an + bn;
+	break;
     case 'SUBTRACT':
-      return roundedA - roundedB;
+	c = an - bn;
+	break;
     case 'DIVIDE':
-      if (roundedB === 0) {
-        return 'Error';
+      if (bn === 0) {
+            c = "Error";
+      } else {
+            c = an / bn;
       }
-      return roundedA / roundedB;
-    default:
-      throw new Error('Invalid operation type');
-  }
+      break;
+    }
+    return c;
 }
 
 module.exports = calculateNumber;

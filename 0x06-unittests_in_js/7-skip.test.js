@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+const { expect } = require('chai');
 
 describe('Testing numbers', () => {
   it('1 is equal to 1', () => {
@@ -9,9 +9,8 @@ describe('Testing numbers', () => {
     expect(2 === 2).to.be.true;
   });
 
-  // Skip the failing test
   it.skip('1 is equal to 3', () => {
-    expect(1 === 3).to.be.true; // This test will be skipped
+    expect(1 === 3).to.be.true;
   });
 
   it('3 is equal to 3', () => {

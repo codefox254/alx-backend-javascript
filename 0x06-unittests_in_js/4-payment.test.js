@@ -1,31 +1,16 @@
-// 4-payment.test.js
-import { sendPaymentRequestToApi } from './4-payment.js';
-import Utils from './utils.js';
-import sinon from 'sinon';
+const {describe, it} = require("mocha");
+const sinon = require("sinon");
+const sendPaymentRequestToApi = require("./4-payment");
+const Utils = require("./utils");
+const assert = require("assert");
 
-describe('sendPaymentRequestToApi', () => {
-  let stub;
+describe("sendPaymentRequestToApi", function() {
+    it("check that Utils.calculateNumber is stubbed", function() {
+	const spy = sinon.spy(console, "log");
+	const stub = sinon.stub(Utils, "calculateNumber").returns(10);
+	sendPaymentRequestToApi(100, 20);
 
-  beforeEach(() => {
-    // Create a stub for Utils.calculateNumber
-    stub = sinon.stub(Utils, 'calculateNumber').returns(10);
-  });
-
-  afterEach(() => {
-    // Restore the original method
-    stub.restore();
-  });
-
-  it('should call Utils.calculateNumber with correct arguments', () => {
-    sendPaymentRequestToApi(100, 20);
-    sinon.assert.calledOnce(stub);
-    sinon.assert.calledWith(stub, 'SUM', 100, 20);
-  });
-
-  it('should log the correct total', () => {
-    const consoleLogSpy = sinon.spy(console, 'log');
-    sendPaymentRequestToApi(100, 20);
-    sinon.assert.calledWith(consoleLogSpy, 'The total is: 10');
-    consoleLogSpy.restore();
-  });
+	assert(spy.withArgs("The total is: 10").calledOnce);
+	assert(stub.withArgs("SUM", 100, 20).calledOnce);
+    });
 });

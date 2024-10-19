@@ -1,62 +1,43 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from './api.js';
+const request = require("request");
+const {describe, it} = require("mocha");
+const expect = require("chai").expect;
 
-const { expect } = chai;
-
-chai.use(chaiHttp);
-
-describe('API Tests', () => {
-  describe('GET /', () => {
-    it('should return status 200 and the correct message', (done) => {
-      chai.request(app)
-        .get('/')
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.text).to.equal('Welcome to the payment system');
-          done();
-        });
+describe("Index page", function() {
+    const options = {
+	url: "http://localhost:7865/",
+	method: "GET"
+    }
+    it("check correct status code", function(done) {
+	request(options, function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-  });
-
-  // New test suite for /cart/:id endpoint
-  describe('GET /cart/:id', () => {
-    it('should return 200 and correct message for a numeric id', (done) => {
-      chai.request(app)
-        .get('/cart/123')
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.body.message).to.equal('Payment methods for cart 123');
-          done();
-        });
+    it("check correct content", function(done) {
+	request(options, function(err, res, body) {
+	    expect(body).to.equal("Welcome to the payment system");
+	    done();
+	});
     });
+});
 
-    it('should return 404 for a non-numeric id', (done) => {
-      chai.request(app)
-        .get('/cart/abc')
-        .end((err, res) => {
-          expect(res).to.have.status(404);
-          expect(res.text).to.equal('Cart ID must be a number');
-          done();
-        });
+describe("Cart page", function() {
+    it("check correct status code for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-
-    it('should return 404 for a negative id', (done) => {
-      chai.request(app)
-        .get('/cart/-1')
-        .end((err, res) => {
-          expect(res).to.have.status(404);
-          done();
-        });
+    it("check correct content for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(body).to.contain("Payment methods for cart 12");
+	    done();
+	});
     });
-
-    it('should return 404 for a decimal id', (done) => {
-      chai.request(app)
-        .get('/cart/1.5')
-        .end((err, res) => {
-          expect(res).to.have.status(404);
-          done();
-        });
+    it("check correct status code for incorrect url", function(done) {
+	request.get("http://localhost:7865/cart/kim", function(err, res, body) {
+	    expect(res.statusCode).to.equal(404);
+	    done();
+	});
     });
-  });
 });
